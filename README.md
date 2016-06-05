@@ -1,6 +1,6 @@
 # Pets
 
-pocketmine pet plugin
+PocketMine Pets Plugin by Driesboy, BalAnce, and stolen from LifeBoat Core!
 
 # Download (phar)
 http://adf.ly/1abzIR
