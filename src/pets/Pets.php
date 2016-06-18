@@ -13,6 +13,7 @@ use pocketmine\block\Liquid;
 use pocketmine\utils\TextFormat;
 use pets\main;
 abstract class Pets extends Creature {
+	
 	protected $owner = null;
 	protected $distanceToOwner = 0;
 	public $closeTarget = null;
@@ -40,7 +41,9 @@ abstract class Pets extends Creature {
 				if (static::NETWORK_ID == 66){
 					$pk->metadata = [
 							15 => [0,1],
-							20 => [2,86]
+							20 => [2,86],
+							23 => [7, -1],
+							24 => [0, 0]
 					];
 					$pk->y = $this->y + 0.6;
 				}
