@@ -27,18 +27,17 @@ abstract class Pets extends Creature {
 		if(!$this->closed ) {
 			if (!isset($this->hasSpawned[$player->getId()]) && isset($player->usedChunks[Level::chunkHash($this->chunk->getX(), $this->chunk->getZ())])) {
 				$pk = new AddEntityPacket();
-				$pk->eid = $this->getId();
-				$pk->type = Villager::NETWORK_ID;
+				$pk->eid = $this->getID();
+				$pk->type = static::NETWORK_ID;
 				$pk->x = $this->x;
 				$pk->y = $this->y;
 				$pk->z = $this->z;
-				$pk->speedX = $this->motionX;
-				$pk->speedY = $this->motionY;
-				$pk->speedZ = $this->motionZ;
+				$pk->speedX = 0;
+				$pk->speedY = 0;
+				$pk->speedZ = 0;
 				$pk->yaw = $this->yaw;
 				$pk->pitch = $this->pitch;
 				$pk->metadata = $this->dataProperties;
-				$player->dataPacket($pk);
 				if (static::NETWORK_ID == 66){
 					$pk->metadata = [
 							15 => [0,1],
