@@ -13,7 +13,7 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
-use pets\command\PetCommand;
+use pets\PetCommand;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
 use pocketmine\nbt\tag\ListTag;
