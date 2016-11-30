@@ -3,7 +3,7 @@
 PocketMine Pets Plugin by Driesboy, BalAnce, and stolen from LifeBoat Core!
 
 # Download (phar)
-http://adf.ly/1abzIR
+Coming soon
 
 # FEATURES
 - [x] Follow the owner
