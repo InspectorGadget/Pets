@@ -18,7 +18,7 @@ class PetCommand extends PluginCommand {
 	}
 
 	public function onCommand(CommandSender $sender,Command $cmd,array $args){
-	if(strtolower($cmd->getName() == "Pets")){
+	if(strtolower($cmd->getName() == "pets")){
 		if (!isset($args[0])) {
 			$sender->sendMessage("§e======PetHelp======");
 			$sender->sendMessage("§b/pets spawn [type] to spawn a pet");
