@@ -34,7 +34,6 @@ class main extends PluginBase implements Listener {
 		@mkdir($this->getDataFolder());
 		@mkdir($this->getDataFolder() . "players");
 		$server = Server::getInstance();
-		$server->getCommandMap()->register('pets', new PetCommand($this,"pets"));
 		Entity::registerEntity(OcelotPet::class);
 		Entity::registerEntity(WolfPet::class);
 		Entity::registerEntity(PigPet::class);
