@@ -8,8 +8,8 @@ commands:
     pets:
         usage: /pets
         description: pets command
-        aliases: pets
+        permission: pets.all
 permissions:
-    pets:
+    pets.all:
         default: true
         description: Allows all pets Features        
