@@ -30,6 +30,19 @@ class PetCommand extends PluginCommand {
 			return true;
 		}
 		switch (strtolower($args[0])){
+			case "respawn":
+				$player = $event->getPlayer();
+				$data = new Config($this->getDataFolder() . "players/" . strtolower($player->getName()) . ".yml", Config::YAML);
+				if($data->exists("type")){ 
+					$type = $data->get("type");
+					$this->changePet($player, $type);
+				}
+				if($data->exists("name")){ 
+					$name = $data->get("name");
+					$this->getPet($player->getName())->setNameTag($name);
+				}
+				return true;
+			break;			
 			case "name":
 			case "setname":
 				if (isset($args[1])){
