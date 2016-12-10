@@ -6,7 +6,6 @@ main: pets\main
 api: [2.0.0] 
 commands:
     pets:
-        usage: /pets
         description: pets command
         permission: pets.all
 permissions:
