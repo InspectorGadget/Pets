@@ -19,8 +19,8 @@ class PetCommand extends PluginCommand {
 		$this->setAliases(array("pets"));
 	}
 
-	public function execute(CommandSender $sender, $currentAlias, array $args) {
-	if($sender->hasPermission('pets.command')){
+	public function onCommand(CommandSender $sender,Command $cmd,array $args){
+	if(strtolower($cmd->getName() == "Pets")){
 		if (!isset($args[0])) {
 			$sender->sendMessage("§e======PetHelp======");
 			$sender->sendMessage("§b/pets spawn [type] to spawn a pet");
