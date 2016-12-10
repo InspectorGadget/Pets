@@ -15,8 +15,6 @@ class PetCommand extends PluginCommand {
 				$name, $main
 		);
 		$this->main = $main;
-		$this->setPermission("pets.command");
-		$this->setAliases(array("pets"));
 	}
 
 	public function onCommand(CommandSender $sender,Command $cmd,array $args){
