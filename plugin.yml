@@ -7,8 +7,4 @@ api: [2.0.0]
 commands:
     pets:
         description: pets command
-        permission: pets.all
-permissions:
-    pets.all:
-        default: true
-        description: Allows all pets Features        
+        permission: pets
