@@ -1,6 +1,15 @@
 name: Pets
-author: Driesboy, BalAnce, LifeBoat Stolen Core
+author: Driesboy
 description: Simple Pets Plugin By BalAnce + Driesboy + Lifeboat
-version: 1.0.0 
+version: 2.0.0 
 main: pets\main
-api: [1.12.0] 
+api: [2.0.0] 
+commands:
+    pets:
+        usage: /pets
+        description: pets command
+        aliases: pets
+permissions:
+    pets:
+        default: true
+        description: Allows all pets Features        
