@@ -20,7 +20,11 @@ class PetCommand extends PluginCommand {
 	}
 
 	public function onCommand(CommandSender $sender,Command $cmd,array $args){
-	if(strtolower($cmd->getName() == "pets")){
+	if(strtolower($cmd) === "pet" or strtolower($cmd) === "pets") {
+		if(!$sender instanceof Player) {
+			$sender->sendMessage("Only Players can use this command");
+			return true;
+		}
 		if (!isset($args[0])) {
 			$sender->sendMessage("§e======PetHelp======");
 			$sender->sendMessage("§b/pets spawn [type] to spawn a pet");
@@ -31,30 +35,34 @@ class PetCommand extends PluginCommand {
 		}
 		switch (strtolower($args[0])){
 			case "respawn":
-				$player = $event->getPlayer();
-				$data = new Config($this->getDataFolder() . "players/" . strtolower($player->getName()) . ".yml", Config::YAML);
-				if($data->exists("type")){ 
-					$type = $data->get("type");
-					$this->changePet($player, $type);
+				if(!$sender->hasPermission('pet.command.respawn')) {
+					$player = $event->getPlayer();
+					$data = new Config($this->getDataFolder() . "players/" . strtolower($player->getName()) . ".yml", Config::YAML);
+					if($data->exists("type")){ 
+						$type = $data->get("type");
+						$this->changePet($player, $type);
+					}
+					if($data->exists("name")){ 
+						$name = $data->get("name");
+						$this->getPet($player->getName())->setNameTag($name);
+					}
+					return true;
 				}
-				if($data->exists("name")){ 
-					$name = $data->get("name");
-					$this->getPet($player->getName())->setNameTag($name);
-				}
-				return true;
 			break;			
 			case "name":
 			case "setname":
-				if (isset($args[1])){
-					unset($args[0]);
-					$name = implode(" ", $args);
-					$this->main->getPet($sender->getName())->setNameTag($name);
-					$sender->sendMessage("Set Name to ".$name);
-					$data = new Config($this->main->getDataFolder() . "players/" . strtolower($sender->getName()) . ".yml", Config::YAML);
-					$data->set("name", $name); 
-					$data->save();
+				if(!$sender->hasPermission('pet.command.setname')) {
+					if (isset($args[1])){
+						unset($args[0]);
+						$name = implode(" ", $args);
+						$this->main->getPet($sender->getName())->setNameTag($name);
+						$sender->sendMessage("Set Name to ".$name);
+						$data = new Config($this->main->getDataFolder() . "players/" . strtolower($sender->getName()) . ".yml", Config::YAML);
+						$data->set("name", $name); 
+						$data->save();
+					}
+					return true;
 				}
-				return true;
 			break;
 			case "help":
 				$sender->sendMessage("§e======PetHelp======");
@@ -65,9 +73,12 @@ class PetCommand extends PluginCommand {
 				return true;
 			break;
 			case "off":
-				$this->main->disablePet($sender);
+				if(!$sender->hasPermission('pet.command.off')) {
+					$this->main->disablePet($sender);
+				}
 			break;
 			case "spawn":
+				if(!$sender->hasPermission('pet.command.spawn')) {
 				if (isset($args[1])){
 					switch ($args[1]){
 						case "Dog":
@@ -188,6 +199,7 @@ class PetCommand extends PluginCommand {
 			break;
 		}
 		return true;
+	}
 	}
 	}
 }
