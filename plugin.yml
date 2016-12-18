@@ -7,4 +7,4 @@ api: [2.0.0]
 commands:
     pets:
         description: pets command
-        permission: pets
+        default: true
