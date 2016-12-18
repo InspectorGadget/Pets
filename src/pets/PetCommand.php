@@ -8,6 +8,8 @@ use pets\main;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
 
+use onebone\economyapi\EconomyAPI;
+
 class PetCommand extends PluginCommand {
 
 	public function __construct(main $main, $name) {
@@ -69,35 +71,113 @@ class PetCommand extends PluginCommand {
 				if (isset($args[1])){
 					switch ($args[1]){
 						case "Dog":
-							$this->main->changePet($sender, "WolfPet");
-							$pettype = "Dog";
-							$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
-							return true;
+							if($r = EconomyAPI::getInstance()->reduceMoney($sender, 1500)){
+								# Cool, everything is fine.
+								$this->main->changePet($sender, "WolfPet");
+								$pettype = "Dog";
+								$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
+								return true;
+							} else {
+								// $r is an error code
+								switch($r){
+									case EconomyAPI::RET_INVALID:
+									# Invalid $amount
+									break;
+									case EconomyAPI::RET_CANCELLED:
+									# Transaction was cancelled for some reason :/
+									break;
+									case EconomyAPI::RET_NO_ACCOUNT:
+									# Player wasn't recognised by EconomyAPI aka. not registered
+									break;
+								}
+							}
 						break;
 						case "Pig":
-							$this->main->changePet($sender, "PigPet");
-							$pettype = "Pig";
-							$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
-							return true;
+							if($r = EconomyAPI::getInstance()->reduceMoney($sender, 750)){
+								# Cool, everything is fine.
+								$this->main->changePet($sender, "PigPet");
+								$pettype = "Pig";
+								$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
+								return true;
+							} else {
+								// $r is an error code
+								switch($r){
+									case EconomyAPI::RET_INVALID:
+									# Invalid $amount
+									break;
+									case EconomyAPI::RET_CANCELLED:
+									# Transaction was cancelled for some reason :/
+									break;
+									case EconomyAPI::RET_NO_ACCOUNT:
+									# Player wasn't recognised by EconomyAPI aka. not registered
+									break;
+								}
+							}
 						break;
 						case "Rabbit":
-							$this->main->changePet($sender, "RabbitPet");
-							$pettype = "Rabbit";
-							$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
-							return true;
-						break;
+							if($r = EconomyAPI::getInstance()->reduceMoney($sender, 1000)){
+								# Cool, everything is fine.
+								$this->main->changePet($sender, "RabbitPet");
+								$pettype = "Rabbit";
+								$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
+								return true;
+							} else {
+								// $r is an error code
+								switch($r){
+									case EconomyAPI::RET_INVALID:
+									# Invalid $amount
+									break;
+									case EconomyAPI::RET_CANCELLED:
+									# Transaction was cancelled for some reason :/
+									break;
+									case EconomyAPI::RET_NO_ACCOUNT:
+									# Player wasn't recognised by EconomyAPI aka. not registered
+									break;
+								}
+							}
 						case "Cat":
-							$this->main->changePet($sender, "OcelotPet");
-							$pettype = "Cat";
-							$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
-							return true;
+							if($r = EconomyAPI::getInstance()->reduceMoney($sender, 1500)){
+								# Cool, everything is fine.
+								$this->main->changePet($sender, "OcelotPet");
+								$pettype = "Cat";
+								$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
+								return true;
+							} else {
+								// $r is an error code
+								switch($r){
+									case EconomyAPI::RET_INVALID:
+									# Invalid $amount
+									break;
+									case EconomyAPI::RET_CANCELLED:
+									# Transaction was cancelled for some reason :/
+									break;
+									case EconomyAPI::RET_NO_ACCOUNT:
+									# Player wasn't recognised by EconomyAPI aka. not registered
+									break;
+								}
+							}
 						break;
 						case "Chicken":
-							$this->main->changePet($sender, "ChickenPet");
-							$pettype = "Chicken";
-							$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
-							return true;
-						break;
+							if($r = EconomyAPI::getInstance()->reduceMoney($sender, 750)){
+								# Cool, everything is fine.
+								$this->main->changePet($sender, "ChickenPet");
+								$pettype = "Chicken";
+								$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
+								return true;
+							} else {
+								// $r is an error code
+								switch($r){
+									case EconomyAPI::RET_INVALID:
+									# Invalid $amount
+									break;
+									case EconomyAPI::RET_CANCELLED:
+									# Transaction was cancelled for some reason :/
+									break;
+									case EconomyAPI::RET_NO_ACCOUNT:
+									# Player wasn't recognised by EconomyAPI aka. not registered
+									break;
+								}
+							}
 					default:
 						$sender->sendMessage("§b/pets spawn [type]");
 						$sender->sendMessage("§bEnabledTypes: Dog, Rabbit, Pig, Cat, Chicken");
