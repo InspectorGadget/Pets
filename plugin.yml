@@ -7,7 +7,7 @@ api: [2.0.0]
 commands:
  pets:
   description: "Manages the pet plugin"
-  usage: "/lbpets <command> <args>"
+  usage: "/pets <command> <args>"
   permission: pets.command
 Permissions:
   pets.command:
