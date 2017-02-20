@@ -20,7 +20,7 @@ class PetCommand extends PluginCommand {
 	}
 
 	public function onCommand(CommandSender $sender,Command $cmd,array $args){
-	if(strtolower($cmd) === "pet" or strtolower($cmd) === "pets") {
+	if(strtolower($cmd) === "pets") {
 		if(!$sender instanceof Player) {
 			$sender->sendMessage("Only Players can use this command");
 			return true;
