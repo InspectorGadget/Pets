@@ -5,12 +5,10 @@ version: 2.0.0
 main: pets\main
 api: [2.0.0] 
 commands:
-  pets:
-    description: "Primary Pets Command"
-    permission: pets.command
-  pet:
-    description: "Primary Pets Command"
-    permission: pets.command
+ pets:
+  description: "Manages the pet plugin"
+  usage: "/lbpets <command> <args>"
+  permission: pets.command
 Permissions:
   pets.command:
     default: true
