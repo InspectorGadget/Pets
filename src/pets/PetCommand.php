@@ -12,21 +12,17 @@ use onebone\economyapi\EconomyAPI;
 
 class PetCommand extends PluginCommand {
 
-	public function __construct(main $main, $name) {
-		parent::__construct(
-				$name, $main
-		);
-		$this->main = $main;
-	}
+	public function __construct(){
+        	parent::__construct("ew", "EggWars by Driesboy & Enes5519");
+    	};
 
-	public function onCommand(CommandSender $sender,Command $cmd,array $args){
-	if(strtolower($cmd) === "pets") {
+	public function onCommand(CommandSender $sender , array $args){
 		if(!$sender instanceof Player) {
 			$sender->sendMessage("Only Players can use this command");
 			return true;
 		}
 		if (!isset($args[0])) {
-			$sender->sendMessage("§e======PetHelp======");
+			$sender->sendMessage("§e======§6 Pet Help Page §e======");
 			$sender->sendMessage("§b/pets spawn [type] to spawn a pet");
 			$sender->sendMessage("§b/pets off to set your pet off");
 			$sender->sendMessage("§b/pets setname [name] name your pet");
@@ -199,7 +195,6 @@ class PetCommand extends PluginCommand {
 			break;
 		}
 		return true;
-	}
 	}
 	}
 }
