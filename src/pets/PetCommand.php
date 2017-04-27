@@ -14,7 +14,7 @@ class PetCommand extends PluginCommand {
 
 	public function __construct(){
         	parent::__construct("Pets", "Pets command");
-    	};
+    	}
 
 	public function onCommand(CommandSender $sender , array $args){
 		if(!$sender instanceof Player) {
