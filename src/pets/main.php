@@ -2,6 +2,12 @@
 
 namespace pets;
 
+use pets\entities\ChickenPet;
+use pets\entities\OcelotPet;
+use pets\entities\Pet;
+use pets\entities\PigPet;
+use pets\entities\RabbitPet;
+use pets\entities\WolfPet;
 use pocketmine\entity\Entity;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -14,7 +20,6 @@ use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
-use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
@@ -29,15 +34,13 @@ class main extends PluginBase implements Listener {
 	public $wishPet;
 
 	public function onEnable() {
-		@mkdir($this->getDataFolder());
+		$this->saveDefaultConfig();
 		@mkdir($this->getDataFolder() . "players");
-		$server = Server::getInstance();
 		Entity::registerEntity(OcelotPet::class);
 		Entity::registerEntity(WolfPet::class);
 		Entity::registerEntity(PigPet::class);
 		Entity::registerEntity(RabbitPet::class);
 		Entity::registerEntity(ChickenPet::class);
-		$this->saveDefaultConfig();
 		$this->getServer()->getLogger()->info(TextFormat::BLUE . "Pets Has Been Enabled.");
 		$this->getServer()->getLogger()->info(TextFormat::BLUE . "By: Driesboiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
 		$this->getServer()->getCommandMap()->register(PetCommand::class, new PetCommand($this));
@@ -70,12 +73,11 @@ class main extends PluginBase implements Listener {
 	}
 
 	public function changePet(Player $player, $newtype) {
-		$type = $newtype;
 		$this->disablePet($player);
 		self::$pet[$player->getName()] = $this->createPet($player, $newtype);
 	}
 
-	public function createPet(Player $player, $type, $holdType = "") {
+	public function createPet(Player $player, $type) {
 		if (isset(self::$pet[$player->getName()]) != true) {
 			$len = rand(8, 12);
 			$x = (-sin(deg2rad($player->yaw))) * $len + $player->getX();
@@ -104,6 +106,7 @@ class main extends PluginBase implements Listener {
 			$pet = $this->create($player, $type, $source);
 			return $pet;
 		}
+		return null;
 	}
 
 	public function create(Player $player, $type, Position $source, ...$args) {
@@ -123,7 +126,7 @@ class main extends PluginBase implements Listener {
 				new FloatTag("", $source instanceof Location ? $source->pitch : 0)
 			]),
 		]);
-		/** @var Pets $pet */
+		/** @var Pet $pet */
 		$pet = Entity::createEntity($type, $player->getLevel(), $nbt, ...$args);
 		$data = new Config($this->getDataFolder() . "players/" . strtolower($player->getName()) . ".yml", Config::YAML);
 		$data->set("type", $type);
@@ -135,7 +138,10 @@ class main extends PluginBase implements Listener {
 		return $pet;
 	}
 
-	/** @return Entity */
+	/**
+	 * @param $player
+	 * @return Pet|Entity
+	 */
 	public function getPet($player) {
 		return self::$pet[$player];
 	}

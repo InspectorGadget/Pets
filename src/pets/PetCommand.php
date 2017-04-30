@@ -16,7 +16,7 @@ class PetCommand extends PluginCommand {
 		parent::__construct("pets", $plugin);
 		$this->setAliases([]);
 		$this->setPermission("all");
-		$this->setDescription("sum shit");
+		$this->setDescription("Command for Pets ~ Your lovely companions");
 		$this->ownerplugin = $plugin;
 	}
 
@@ -83,7 +83,7 @@ class PetCommand extends PluginCommand {
 									# Cool, everything is fine.
 									$this->ownerplugin->changePet($sender, "WolfPet");
 									$pettype = "Dog";
-									$sender->sendMessage($this->ownerplugin->getConfig()->get("PetCreateMessage"));
+									$sender->sendMessage(sprintf($this->ownerplugin->getConfig()->get("PetCreateMessage"), $pettype));
 									return true;
 								} else {
 									// $r is an error code
@@ -105,7 +105,7 @@ class PetCommand extends PluginCommand {
 									# Cool, everything is fine.
 									$this->ownerplugin->changePet($sender, "PigPet");
 									$pettype = "Pig";
-									$sender->sendMessage($this->ownerplugin->getConfig()->get("PetCreateMessage"));
+									$sender->sendMessage(sprintf($this->ownerplugin->getConfig()->get("PetCreateMessage"), $pettype));
 									return true;
 								} else {
 									// $r is an error code
@@ -127,7 +127,7 @@ class PetCommand extends PluginCommand {
 									# Cool, everything is fine.
 									$this->ownerplugin->changePet($sender, "RabbitPet");
 									$pettype = "Rabbit";
-									$sender->sendMessage($this->ownerplugin->getConfig()->get("PetCreateMessage"));
+									$sender->sendMessage(sprintf($this->ownerplugin->getConfig()->get("PetCreateMessage"), $pettype));
 									return true;
 								} else {
 									// $r is an error code
@@ -149,7 +149,7 @@ class PetCommand extends PluginCommand {
 									# Cool, everything is fine.
 									$this->ownerplugin->changePet($sender, "OcelotPet");
 									$pettype = "Cat";
-									$sender->sendMessage($this->ownerplugin->getConfig()->get("PetCreateMessage"));
+									$sender->sendMessage(sprintf($this->ownerplugin->getConfig()->get("PetCreateMessage"), $pettype));
 									return true;
 								} else {
 									// $r is an error code
@@ -171,7 +171,7 @@ class PetCommand extends PluginCommand {
 									# Cool, everything is fine.
 									$this->ownerplugin->changePet($sender, "ChickenPet");
 									$pettype = "Chicken";
-									$sender->sendMessage($this->ownerplugin->getConfig()->get("PetCreateMessage"));
+									$sender->sendMessage(sprintf($this->ownerplugin->getConfig()->get("PetCreateMessage"), $pettype));
 									return true;
 								} else {
 									// $r is an error code
@@ -198,5 +198,6 @@ class PetCommand extends PluginCommand {
 				}
 				return true;
 		}
+		return false;
 	}
 }

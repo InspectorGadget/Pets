@@ -1,8 +1,8 @@
 <?php
 
-namespace pets;
+namespace pets\entities;
 
-class PigPet extends Pets {
+class PigPet extends Pet {
 
 	const NETWORK_ID = 12;
 

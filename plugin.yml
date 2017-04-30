@@ -2,5 +2,5 @@ name: Pets
 author: Driesboy
 description: Simple Pets Plugin By BalAnce + Driesboy + Lifeboat
 version: 2.0.0 
-main: pets\main
+main: pets\Main
 api: [2.0.0]

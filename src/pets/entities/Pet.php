@@ -1,6 +1,6 @@
 <?php
 
-namespace Pets;
+namespace pets\entities;
 
 use pocketmine\block\Air;
 use pocketmine\block\Liquid;
@@ -12,7 +12,7 @@ use pocketmine\math\Vector3;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-abstract class Pets extends Creature {
+abstract class Pet extends Creature {
 
 	/** @var Player */
 	public $closeTarget = null;
