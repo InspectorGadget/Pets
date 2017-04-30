@@ -3,17 +3,4 @@ author: Driesboy
 description: Simple Pets Plugin By BalAnce + Driesboy + Lifeboat
 version: 2.0.0 
 main: pets\main
-api: [2.0.0] 
-
-permissions:
-  pets.command:
-    default: true
-    children:
-      pets.command.respawn:
-        default: true
-      pets.command.setname:
-        default: true
-      pets.command.off:
-        default: true
-      pets.command.spawn:
-        default: true
+api: [2.0.0]
