@@ -13,7 +13,6 @@ use pocketmine\block\Liquid;
 use pocketmine\utils\TextFormat;
 use pets\main;
 abstract class Pets extends Creature {
-	
 	protected $owner = null;
 	protected $distanceToOwner = 0;
 	public $closeTarget = null;
@@ -32,6 +31,7 @@ abstract class Pets extends Creature {
 				$pk->x = $this->x;
 				$pk->y = $this->y;
 				$pk->z = $this->z;
+				
 				$pk->speedX = 0;
 				$pk->speedY = 0;
 				$pk->speedZ = 0;
@@ -41,9 +41,7 @@ abstract class Pets extends Creature {
 				if (static::NETWORK_ID == 66){
 					$pk->metadata = [
 							15 => [0,1],
-							20 => [2,86],
-							23 => [7, -1],
-							24 => [0, 0]
+							20 => [2,86]
 					];
 					$pk->y = $this->y + 0.6;
 				}
@@ -53,7 +51,9 @@ abstract class Pets extends Creature {
 		}
 	}
 	public function updateMovement() {
-		if ($this->lastX !== $this->x || $this->lastY !== $this->y || $this->lastZ !== $this->z || $this->lastYaw !== $this->yaw || $this->lastPitch !== $this->pitch){
+		if (
+				$this->lastX !== $this->x || $this->lastY !== $this->y || $this->lastZ !== $this->z || $this->lastYaw !== $this->yaw || $this->lastPitch !== $this->pitch
+		) {
 			$this->lastX = $this->x;
 			$this->lastY = $this->y;
 			$this->lastZ = $this->z;
@@ -88,7 +88,7 @@ abstract class Pets extends Creature {
 			$this->motionZ = 0;
 			$this->motionY = 0;
 			if(!is_null($this->closeTarget)) {
-				parent::kill();
+				$this->close();
 			}
 			return;
 		} else {
@@ -145,6 +145,15 @@ abstract class Pets extends Creature {
 			$this->fastClose();
 			return false;
 		}
+
+		if($this->getHealth() == 0){
+			return false;
+		}
+		
+		if(!$this->isAlive()){
+			return false;
+		}
+		
 		if($this->closed){
 			return false;
 		}
@@ -168,20 +177,27 @@ abstract class Pets extends Creature {
 	}
 	
 	public function fastClose() {
-		parent::kill();
+		parent::close();
 	}
 	public function close(){
 		if(!($this->owner instanceof Player) || $this->owner->closed) {
- 			$this->fastClose();
- 			return;
- 		}
- 		if(is_null($this->closeTarget)) {
-			$len = rand(12, 15);
-			$x = (-sin(deg2rad( $this->owner->yaw + 20))) * $len  +  $this->owner->getX();
-			$z = cos(deg2rad( $this->owner->yaw + 20)) * $len  +  $this->owner->getZ();
-			$this->closeTarget = new Vector3($x, $this->owner->getY() + 1, $z);
+			$this->fastClose();
+			return;
+		}
+		if(is_null($this->closeTarget)) {
+// 			$len = rand(12, 15);
+// 			$x = (-sin(deg2rad( $this->owner->yaw + 20))) * $len  +  $this->owner->getX();
+// 			$z = cos(deg2rad( $this->owner->yaw + 20)) * $len  +  $this->owner->getZ();
+// 			$this->closeTarget = new Vector3($x, $this->owner->getY() + 1, $z);
+			$this->kill();
+			$this->despawnFromAll();
+			$this->setHealth(0);
 		} else {
-			parent::kill();
+			if (isset(main::$pet[$this->owner->getName()])) {
+				$this->kill();
+				$this->despawnFromAll();
+				$this->setHealth(0);
+			}
 		}
 	}
 	
