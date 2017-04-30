@@ -43,6 +43,7 @@ class main extends PluginBase implements Listener {
 		$this->getServer()->getLogger()->info(TextFormat::BLUE . "Pets Has Been Enabled.");
 		$this->getServer()->getLogger()->info(TextFormat::BLUE . "By: Driesboy. http://github.com/Driesboy");
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
+		Server::getInstance()->getCommandMap()->register("pets", new PetCommand());
 	}
 
 	public function create($player,$type, Position $source, ...$args) {
