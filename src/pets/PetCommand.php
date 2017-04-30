@@ -13,7 +13,7 @@ use onebone\economyapi\EconomyAPI;
 class PetCommand extends PluginCommand {
 
 	public function __construct(){
-        	parent::__construct("pets", "Pets command");
+        	parent::__construct("pets");
     	}
 
 	public function onCommand(CommandSender $sender , array $args){
