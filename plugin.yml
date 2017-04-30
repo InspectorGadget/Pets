@@ -4,11 +4,8 @@ description: Simple Pets Plugin By BalAnce + Driesboy + Lifeboat
 version: 2.0.0 
 main: pets\main
 api: [2.0.0] 
-commands:
- pets:
-  description: "Manages the pet plugin"
-  permission: pets.command
-Permissions:
+
+permissions:
   pets.command:
     default: true
     children:
