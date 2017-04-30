@@ -63,7 +63,7 @@ class PetCommand extends Command {
 				$sender->sendMessage("§b/pets spawn [type] to spawn a pet");
 				$sender->sendMessage("§b/pets off to set your pet off");
 				$sender->sendMessage("§b/pets setname [name] name your pet");
-				$sender->sendMessage("§bEnabledTypes: Dog, Rabbit, Pig, Cat, Chicken");
+				$sender->sendMessage("§bEnabledTypes: dog, rabbit, pig, cat, chicken");
 			}elseif ($args[0] === "off"){
 				if($sender->hasPermission('pet.command.off')) {
 					$this->main->disablePet($sender);
@@ -84,7 +84,7 @@ class PetCommand extends Command {
 								# Invalid $amount
 								break;
 								case EconomyAPI::RET_CANCELLED:
-								# Transaction was cancelled for some reason :/
+								$sender->sendMessage("§cYou dont have enought money");
 								break;
 								case EconomyAPI::RET_NO_ACCOUNT:
 								# Player wasn't recognised by EconomyAPI aka. not registered
@@ -105,7 +105,7 @@ class PetCommand extends Command {
 								# Invalid $amount
 								break;
 								case EconomyAPI::RET_CANCELLED:
-								# Transaction was cancelled for some reason :/
+								$sender->sendMessage("§cYou dont have enought money");
 								break;
 								case EconomyAPI::RET_NO_ACCOUNT:
 								# Player wasn't recognised by EconomyAPI aka. not registered
@@ -126,7 +126,7 @@ class PetCommand extends Command {
 								# Invalid $amount
 								break;
 								case EconomyAPI::RET_CANCELLED:
-								# Transaction was cancelled for some reason :/
+								$sender->sendMessage("§cYou dont have enought money");
 								break;
 								case EconomyAPI::RET_NO_ACCOUNT:
 								# Player wasn't recognised by EconomyAPI aka. not registered
@@ -147,7 +147,7 @@ class PetCommand extends Command {
 								# Invalid $amount
 								break;
 								case EconomyAPI::RET_CANCELLED:
-								# Transaction was cancelled for some reason :/
+								$sender->sendMessage("§cYou dont have enought money");
 								break;
 								case EconomyAPI::RET_NO_ACCOUNT:
 								# Player wasn't recognised by EconomyAPI aka. not registered
@@ -168,7 +168,7 @@ class PetCommand extends Command {
 								# Invalid $amount
 								break;
 								case EconomyAPI::RET_CANCELLED:
-								# Transaction was cancelled for some reason :/
+								$sender->sendMessage("§cYou dont have enought money");
 								break;
 								case EconomyAPI::RET_NO_ACCOUNT:
 								# Player wasn't recognised by EconomyAPI aka. not registered
