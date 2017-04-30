@@ -3,6 +3,7 @@
 namespace pets;
 
 use pocketmine\command\CommandSender;
+use pocketmine\command\Command;
 use pocketmine\command\PluginCommand;
 use pets\main;
 use pocketmine\utils\Config;
@@ -10,11 +11,11 @@ use pocketmine\utils\TextFormat as TF;
 
 use onebone\economyapi\EconomyAPI;
 
-class PetCommand extends PluginCommand {
+class PetCommand extends Command {
 
 	public function __construct(){
-        	parent::__construct("pets");
-    	}
+    		parent::__construct("pets", "pets plugin");
+  	}
 
 	public function onCommand(CommandSender $sender , array $args){
 		if(!$sender instanceof Player) {
@@ -31,7 +32,7 @@ class PetCommand extends PluginCommand {
 		}
 		switch (strtolower($args[0])){
 			case "respawn":
-				if(!$sender->hasPermission('pet.command.respawn')) {
+				if($sender->hasPermission('pet.command.respawn')) {
 					$player = $event->getPlayer();
 					$data = new Config($this->getDataFolder() . "players/" . strtolower($player->getName()) . ".yml", Config::YAML);
 					if($data->exists("type")){ 
@@ -47,7 +48,7 @@ class PetCommand extends PluginCommand {
 			break;			
 			case "name":
 			case "setname":
-				if(!$sender->hasPermission('pet.command.setname')) {
+				if($sender->hasPermission('pet.command.setname')) {
 					if (isset($args[1])){
 						unset($args[0]);
 						$name = implode(" ", $args);
@@ -69,12 +70,12 @@ class PetCommand extends PluginCommand {
 				return true;
 			break;
 			case "off":
-				if(!$sender->hasPermission('pet.command.off')) {
+				if($sender->hasPermission('pet.command.off')) {
 					$this->main->disablePet($sender);
 				}
 			break;
 			case "spawn":
-				if(!$sender->hasPermission('pet.command.spawn')) {
+				if($sender->hasPermission('pet.command.spawn')) {
 				if (isset($args[1])){
 					switch ($args[1]){
 						case "Dog":
