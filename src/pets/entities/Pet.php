@@ -1,30 +1,45 @@
 <?php
-namespace Pets;
-use pocketmine\entity\Creature;
-use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\Timings;
-use pocketmine\level\Level;
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\Player;
-use pocketmine\math\Vector3;
-use pocketmine\math\Math;
+
+namespace pets\entities;
+
 use pocketmine\block\Air;
 use pocketmine\block\Liquid;
-use pocketmine\utils\TextFormat;
-use pets\main;
-abstract class Pets extends Creature {
-	
+use pocketmine\entity\Creature;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\level\Level;
+use pocketmine\math\Math;
+use pocketmine\math\Vector3;
+use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
+
+abstract class Pet extends Creature {
+
+	/** @var Player */
+	public $closeTarget = null;
+	/** @var Player */
 	protected $owner = null;
 	protected $distanceToOwner = 0;
-	public $closeTarget = null;
-	public function saveNBT() {
-		
+
+	/**
+	 * Return interval from started to current time in minutes
+	 *
+	 * @param string $started
+	 * @return float
+	 */
+	public static function getTimeInterval($started) {
+		return round((strtotime(date('Y-m-d H:i:s')) - strtotime($started)) / 60);
 	}
+
+	public function saveNBT() {
+
+	}
+
 	public function setOwner(Player $player) {
 		$this->owner = $player;
 	}
+
 	public function spawnTo(Player $player) {
-		if(!$this->closed ) {
+		if (!$this->closed) {
 			if (!isset($this->hasSpawned[$player->getId()]) && isset($player->usedChunks[Level::chunkHash($this->chunk->getX(), $this->chunk->getZ())])) {
 				$pk = new AddEntityPacket();
 				$pk->eid = $this->getID();
@@ -39,12 +54,12 @@ abstract class Pets extends Creature {
 				$pk->yaw = $this->yaw;
 				$pk->pitch = $this->pitch;
 				$pk->metadata = $this->dataProperties;
-				if (static::NETWORK_ID == 66){
+				if (static::NETWORK_ID == 66) {
 					$pk->metadata = [
-							15 => [0,1],
-							20 => [2,86],
-							23 => [7, -1],
-							24 => [0, 0]
+						15 => [0, 1],
+						20 => [2, 86],
+						23 => [7, -1],
+						24 => [0, 0]
 					];
 					$pk->y = $this->y + 0.6;
 				}
@@ -53,23 +68,9 @@ abstract class Pets extends Creature {
 			}
 		}
 	}
-<<<<<<< HEAD:src/pets/entities/Pet.php
-=======
-	public function updateMovement() {
-		if ($this->lastX !== $this->x || $this->lastY !== $this->y || $this->lastZ !== $this->z || $this->lastYaw !== $this->yaw || $this->lastPitch !== $this->pitch){
-			$this->lastX = $this->x;
-			$this->lastY = $this->y;
-			$this->lastZ = $this->z;
-			$this->lastYaw = $this->yaw;
-			$this->lastPitch = $this->pitch;
-		}
-		$this->level->addEntityMovement($this->chunk->getX(), $this->chunk->getZ(), $this->id, $this->x, $this->y, $this->z, $this->yaw, $this->pitch);
-	}
->>>>>>> parent of 5f9b8f9... Merge branch 'pr/14':src/pets/Pets.php
 	public function attack($damage, EntityDamageEvent $source) {
-		
+
 	}
-<<<<<<< HEAD:src/pets/entities/Pet.php
 
 	public function onUpdate($currentTick) {
 		if(!($this->owner instanceof Player) || $this->owner->closed) {
@@ -96,18 +97,18 @@ abstract class Pets extends Creature {
 		$this->entityBaseTick($tickDiff);
 		$this->updateMove();
 		$this->checkChunks();
-=======
-	public function move($dx, $dy, $dz) {
-		$this->boundingBox->offset($dx, 0, 0);
-		$this->boundingBox->offset(0, 0, $dz);
-		$this->boundingBox->offset(0, $dy, 0);
-		$this->setComponents($this->x + $dx, $this->y + $dy, $this->z + $dz);		
->>>>>>> parent of 5f9b8f9... Merge branch 'pr/14':src/pets/Pets.php
 		return true;
 	}
-	public function getSpeed() {
-		return 1;
+
+	public function returnToOwner() {
+		$len = rand(2, 6);
+		$x = (-sin(deg2rad($this->owner->yaw))) * $len + $this->owner->getX();
+		$z = cos(deg2rad($this->owner->yaw)) * $len + $this->owner->getZ();
+		$this->x = $x;
+		$this->y = $this->owner->getY() + 1;
+		$this->z = $z;
 	}
+
 	public function updateMove() {
 		if(is_null($this->closeTarget)) {
 			$x = $this->owner->x - $this->x;
@@ -121,11 +122,7 @@ abstract class Pets extends Creature {
 			$this->motionZ = 0;
 			$this->motionY = 0;
 			if(!is_null($this->closeTarget)) {
-<<<<<<< HEAD:src/pets/entities/Pet.php
 				$this->close();
-=======
-				parent::kill();
->>>>>>> parent of 5f9b8f9... Merge branch 'pr/14':src/pets/Pets.php
 			}
 			return;
 		} else {
@@ -177,59 +174,26 @@ abstract class Pets extends Creature {
 		$this->move($dx, $dy, $dz);
 		$this->updateMovement();
 	}
-	public function onUpdate($currentTick) {
-		if(!($this->owner instanceof Player) || $this->owner->closed) {
-			$this->fastClose();
-			return false;
-		}
-		if($this->closed){
-			return false;
-		}
-		$tickDiff = $currentTick - $this->lastUpdate;
-		$this->lastUpdate = $currentTick;
-		if (is_null($this->closeTarget) && $this->distance($this->owner) > 40) {
-			$this->returnToOwner();
-		}
-		$this->entityBaseTick($tickDiff);
-		$this->updateMove();
-		$this->checkChunks();
+
+	public function getSpeed() {
+		return 1;
+	}
+
+	public function move($dx, $dy, $dz) {
+		$this->boundingBox->offset($dx, $dy, $dz);
+		$this->setComponents($this->x + $dx, $this->y + $dy, $this->z + $dz);
 		return true;
 	}
-	public function returnToOwner() {
-		$len = rand(2, 6);
-		$x = (-sin(deg2rad( $this->owner->yaw))) * $len  +  $this->owner->getX();
-		$z = cos(deg2rad( $this->owner->yaw)) * $len  +  $this->owner->getZ();
-		$this->x = $x;
-		$this->y = $this->owner->getY() + 1;
-		$this->z = $z;
-	}
-	
-	public function fastClose() {
-		parent::kill();
-	}
-	public function close(){
-		if(!($this->owner instanceof Player) || $this->owner->closed) {
- 			$this->fastClose();
- 			return;
- 		}
- 		if(is_null($this->closeTarget)) {
-			$len = rand(12, 15);
-			$x = (-sin(deg2rad( $this->owner->yaw + 20))) * $len  +  $this->owner->getX();
-			$z = cos(deg2rad( $this->owner->yaw + 20)) * $len  +  $this->owner->getZ();
-			$this->closeTarget = new Vector3($x, $this->owner->getY() + 1, $z);
-		} else {
-			parent::kill();
+
+	public function updateMovement() {
+		if ($this->lastX !== $this->x || $this->lastY !== $this->y || $this->lastZ !== $this->z || $this->lastYaw !== $this->yaw || $this->lastPitch !== $this->pitch) {
+			$this->lastX = $this->x;
+			$this->lastY = $this->y;
+			$this->lastZ = $this->z;
+			$this->lastYaw = $this->yaw;
+			$this->lastPitch = $this->pitch;
 		}
+		$this->level->addEntityMovement($this->chunk->getX(), $this->chunk->getZ(), $this->id, $this->x, $this->y, $this->z, $this->yaw, $this->pitch);
 	}
-	
-	/**
-	 * Return interval from started to current time in minutes
-	 * 
-	 * @param string $started
-	 * @return float
-	 */
-	public static function getTimeInterval($started) {
-		return round((strtotime(date('Y-m-d H:i:s')) - strtotime($started)) /60);	
-	}
-	
+
 }
