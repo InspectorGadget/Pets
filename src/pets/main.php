@@ -54,8 +54,34 @@ class main extends PluginBase implements Listener {
 
 	public function disablePet(Player $player) {
 		if (isset(self::$pet[$player->getName()])) {
-			self::$pet[$player->getName()]->close();
+			self::$pet[$player->getName()]->closepet();
 			unset(self::$pet[$player->getName()]);
+		}
+	}
+	
+	public function fastClose() {
+		parent::close();
+	}
+	
+	public function closepet(){
+		if(!($this->owner instanceof Player) || $this->owner->closed) {
+			$this->fastClose();
+			return;
+		}
+		if(is_null($this->closeTarget)) {
+ 			$len = rand(12, 15);
+ 			$x = (-sin(deg2rad( $this->owner->yaw + 20))) * $len  +  $this->owner->getX();
+			$z = cos(deg2rad( $this->owner->yaw + 20)) * $len  +  $this->owner->getZ();
+ 			$this->closeTarget = new Vector3($x, $this->owner->getY() + 1, $z);
+			$this->close();
+			$this->despawnFromAll();
+			$this->setHealth(0);
+		} else {
+			if (isset(self::$pet[$this->owner->getName()])) {
+				$this->close();
+				$this->despawnFromAll();
+				$this->setHealth(0);
+			}
 		}
 	}
 
