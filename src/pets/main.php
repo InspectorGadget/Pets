@@ -22,17 +22,15 @@ use pocketmine\math\Vector3;
 use pocketmine\utils\Config;
 
 class main extends PluginBase implements Listener {
-
+	
 	public static $pet;
 	public static $petState;
 	public $petType;
 	public $wishPet;
 	public static $isPetChanging;
 	public static $type;
-	private static $ins;
-
+	
 	public function onEnable() {
-		self::$ins = $this;
 		@mkdir($this->getDataFolder());
 		@mkdir($this->getDataFolder() . "players");
 		$server = Server::getInstance();
@@ -45,15 +43,11 @@ class main extends PluginBase implements Listener {
 		$this->getServer()->getLogger()->info(TextFormat::BLUE . "Pets Has Been Enabled.");
 		$this->getServer()->getLogger()->info(TextFormat::BLUE . "By: Driesboy. http://github.com/Driesboy");
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
-		$this->getServer()->getCommandMap()->register("pets", new PetCommand());
+		Server::getInstance()->getCommandMap()->register("pets", new PetCommand());
 	}
 
-	public static function getInstance(){
-    return self::$ins;
-  }
-
-	public function create($player, $type, Position $source, ...$args) {
-		$level = $source->getLevel();
+	public function create($player,$type, Position $source, ...$args) {
+		$chunk = $source->getLevel()->getChunk($source->x >> 4, $source->z >> 4, true);
 		$nbt = new CompoundTag("", [
 			"Pos" => new ListTag("Pos", [
 				new DoubleTag("", $source->x),
@@ -70,18 +64,18 @@ class main extends PluginBase implements Listener {
 				new FloatTag("", $source instanceof Location ? $source->pitch : 0)
 					]),
 		]);
-		$pet = Entity::createEntity($type, $level, $nbt, ...$args);
+		$pet = Entity::createEntity($type, $chunk, $nbt, ...$args);
 		$data = new Config($this->getDataFolder() . "players/" . strtolower($player->getName()) . ".yml", Config::YAML);
-		$data->set("type", $type);
+		$data->set("type", $type); 
 		$data->save();
 		$pet->setOwner($player);
 		$pet->spawnToAll();
-		return $pet;
+		return $pet; 
 	}
 
 	public function createPet(Player $player, $type, $holdType = "") {
- 		if (isset($this->pet[$player->getName()]) != true) {
-			$len = rand(8, 12);
+ 		if (isset($this->pet[$player->getName()]) != true) {	
+			$len = rand(8, 12); 
 			$x = (-sin(deg2rad($player->yaw))) * $len  + $player->getX();
 			$z = cos(deg2rad($player->yaw)) * $len  + $player->getZ();
 			$y = $player->getLevel()->getHighestBlockAt($x, $z);
@@ -114,36 +108,34 @@ class main extends PluginBase implements Listener {
 		$player = $event->getPlayer();
 		$this->disablePet($player);
 	}
-
+	
 	public function disablePet(Player $player) {
 		if (isset(self::$pet[$player->getName()])) {
 			self::$pet[$player->getName()]->close();
 			self::$pet[$player->getName()] = null;
 		}
 	}
-
+	
 	public function changePet(Player $player, $newtype){
 		$type = $newtype;
 		$this->disablePet($player);
 		self::$pet[$player->getName()] = $this->createPet($player, $newtype);
 	}
-
+	
 	public function getPet($player) {
 		return self::$pet[$player];
 	}
-
+	
 	public function onJoin(PlayerJoinEvent $event){
 		$player = $event->getPlayer();
 		$data = new Config($this->getDataFolder() . "players/" . strtolower($player->getName()) . ".yml", Config::YAML);
-		if($data->exists("type")){
+		if($data->exists("type")){ 
 			$type = $data->get("type");
 			$this->changePet($player, $type);
 		}
-		if($data->exists("name")){
+		if($data->exists("name")){ 
 			$name = $data->get("name");
 			$this->getPet($player->getName())->setNameTag($name);
-			$this->getPet($player->getName())->setNameTagVisible(true);
-			$this->getPet($player->getName())->setNameTagAlwaysVisible(true);
 		}
 	}
 }
