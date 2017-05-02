@@ -3,199 +3,201 @@
 namespace pets;
 
 use pocketmine\command\CommandSender;
-use pocketmine\command\Command;
 use pocketmine\command\PluginCommand;
-use pets\main;
+use pocketmine\Player;
+use pocketmine\plugin\Plugin;
 use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat as TF;
 
-use onebone\economyapi\EconomyAPI;
+class PetCommand extends PluginCommand {
+	
+	/** @var main|Plugin */
+	private $ownerplugin;
 
-class PetCommand extends Command {
+	public function __construct(Plugin $plugin) {
+		parent::__construct("pets", $plugin);
+		$this->setAliases([]);
+		$this->setPermission("all");
+		$this->setDescription("Command for Pets ~ Your lovely companions");
+		$this->ownerplugin = $plugin;
+	}
 
-	public function __construct(){
-    		parent::__construct("pets", "pets plugin");
-  	}
-
-	public function onCommand(CommandSender $sender , array $args){
-		if(!$sender instanceof Player) {
+	public function execute(CommandSender $sender, $commandLabel, array $args){
+		if (!$sender instanceof Player) {
 			$sender->sendMessage("Only Players can use this command");
 			return true;
 		}
 		if (!isset($args[0])) {
-			$sender->sendMessage("§e======§6 Pet Help Page §e======");
-			$sender->sendMessage("§b/pets spawn [type] to spawn a pet");
-			$sender->sendMessage("§b/pets off to set your pet off");
-			$sender->sendMessage("§b/pets setname [name] name your pet");
-			$sender->sendMessage("§bEnabledTypes: Dog, Rabbit, Pig, Cat, Chicken");
-			return true;
+			$args[0] = "help";
 		}
-		switch (strtolower($args[0])){
+		switch (strtolower($args[0])) {
 			case "respawn":
-				if($sender->hasPermission('pet.command.respawn')) {
-					$player = $event->getPlayer();
-					$data = new Config($this->getDataFolder() . "players/" . strtolower($player->getName()) . ".yml", Config::YAML);
-					if($data->exists("type")){ 
+				if ($sender->hasPermission('pet.command.respawn')) {
+					$data = new Config($this->ownerplugin->getDataFolder() . "players/" . strtolower($sender->getName()) . ".yml", Config::YAML);
+					if ($data->exists("type")) {
 						$type = $data->get("type");
-						$this->changePet($player, $type);
+						$this->ownerplugin->changePet($sender, $type);
 					}
-					if($data->exists("name")){ 
+					if ($data->exists("name")) {
 						$name = $data->get("name");
-						$this->getPet($player->getName())->setNameTag($name);
+						$this->ownerplugin->getPet($sender->getName())->setNameTag($name);
 					}
 					return true;
 				}
-			break;			
+				break;
 			case "name":
 			case "setname":
-				if($sender->hasPermission('pet.command.setname')) {
-					if (isset($args[1])){
+				if ($sender->hasPermission('pet.command.setname')) {
+					if (isset($args[1])) {
 						unset($args[0]);
 						$name = implode(" ", $args);
-						$this->main->getPet($sender->getName())->setNameTag($name);
-						$sender->sendMessage("Set Name to ".$name);
-						$data = new Config($this->main->getDataFolder() . "players/" . strtolower($sender->getName()) . ".yml", Config::YAML);
-						$data->set("name", $name); 
+						$this->ownerplugin->getPet($sender->getName())->setNameTag($name);
+						$this->ownerplugin->getPet($sender->getName())->setNameTagAlwaysVisible(true);
+						$this->ownerplugin->getPet($sender->getName())->setNameTagVisible(true);
+						$sender->sendMessage("Set Name to " . $name);
+						$data = new Config($this->ownerplugin->getDataFolder() . "players/" . strtolower($sender->getName()) . ".yml", Config::YAML);
+						$data->set("name", $name);
 						$data->save();
 					}
 					return true;
 				}
-			break;
+				break;
 			case "help":
 				$sender->sendMessage("§e======PetHelp======");
 				$sender->sendMessage("§b/pets spawn [type] to spawn a pet");
 				$sender->sendMessage("§b/pets off to set your pet off");
 				$sender->sendMessage("§b/pets setname [name] name your pet");
+				$sender->sendMessage("§b/pets respawn - spawns it again");
 				$sender->sendMessage("§bEnabledTypes: Dog, Rabbit, Pig, Cat, Chicken");
 				return true;
-			break;
+				break;
 			case "off":
-				if($sender->hasPermission('pet.command.off')) {
-					$this->main->disablePet($sender);
+				if ($sender->hasPermission('pet.command.off')) {
+					$this->ownerplugin->disablePet($sender);
 				}
-			break;
+				break;
 			case "spawn":
-				if($sender->hasPermission('pet.command.spawn')) {
-				if (isset($args[1])){
-					switch ($args[1]){
-						case "Dog":
-							if($r = EconomyAPI::getInstance()->reduceMoney($sender, 1500)){
-								# Cool, everything is fine.
-								$this->main->changePet($sender, "WolfPet");
-								$pettype = "Dog";
-								$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
-								return true;
-							} else {
-								// $r is an error code
-								switch($r){
-									case EconomyAPI::RET_INVALID:
-									# Invalid $amount
-									break;
-									case EconomyAPI::RET_CANCELLED:
-									# Transaction was cancelled for some reason :/
-									break;
-									case EconomyAPI::RET_NO_ACCOUNT:
-									# Player wasn't recognised by EconomyAPI aka. not registered
-									break;
+				if ($sender->hasPermission('pet.command.spawn')) {
+					if (isset($args[1])) {
+						switch ($args[1]) {
+							case "Dog":
+								if ($r = EconomyAPI::getInstance()->reduceMoney($sender, 1500)) {
+									# Cool, everything is fine.
+									$this->ownerplugin->changePet($sender, "WolfPet");
+									$pettype = "Dog";
+									$sender->sendMessage(sprintf($this->ownerplugin->getConfig()->get("PetCreateMessage"), $pettype));
+									return true;
+								} else {
+									switch ($r) {
+										case EconomyAPI::RET_INVALID:
+											# Invalid $amount
+											break;
+										case EconomyAPI::RET_CANCELLED:
+											# Transaction was cancelled for some reason :/
+											break;
+										case EconomyAPI::RET_NO_ACCOUNT:
+											# Player wasn't recognised by EconomyAPI aka. not registered
+											break;
+									}
 								}
-							}
-						break;
-						case "Pig":
-							if($r = EconomyAPI::getInstance()->reduceMoney($sender, 750)){
-								# Cool, everything is fine.
-								$this->main->changePet($sender, "PigPet");
-								$pettype = "Pig";
-								$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
-								return true;
-							} else {
-								// $r is an error code
-								switch($r){
-									case EconomyAPI::RET_INVALID:
-									# Invalid $amount
-									break;
-									case EconomyAPI::RET_CANCELLED:
-									# Transaction was cancelled for some reason :/
-									break;
-									case EconomyAPI::RET_NO_ACCOUNT:
-									# Player wasn't recognised by EconomyAPI aka. not registered
-									break;
+								break;
+							case "Pig":
+								if ($r = EconomyAPI::getInstance()->reduceMoney($sender, 750)) {
+									# Cool, everything is fine.
+									$this->ownerplugin->changePet($sender, "PigPet");
+									$pettype = "Pig";
+									$sender->sendMessage(sprintf($this->ownerplugin->getConfig()->get("PetCreateMessage"), $pettype));
+									return true;
+								} else {
+									// $r is an error code
+									switch ($r) {
+										case EconomyAPI::RET_INVALID:
+											# Invalid $amount
+											break;
+										case EconomyAPI::RET_CANCELLED:
+											# Transaction was cancelled for some reason :/
+											break;
+										case EconomyAPI::RET_NO_ACCOUNT:
+											# Player wasn't recognised by EconomyAPI aka. not registered
+											break;
+									}
 								}
-							}
-						break;
-						case "Rabbit":
-							if($r = EconomyAPI::getInstance()->reduceMoney($sender, 1000)){
-								# Cool, everything is fine.
-								$this->main->changePet($sender, "RabbitPet");
-								$pettype = "Rabbit";
-								$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
-								return true;
-							} else {
-								// $r is an error code
-								switch($r){
-									case EconomyAPI::RET_INVALID:
-									# Invalid $amount
-									break;
-									case EconomyAPI::RET_CANCELLED:
-									# Transaction was cancelled for some reason :/
-									break;
-									case EconomyAPI::RET_NO_ACCOUNT:
-									# Player wasn't recognised by EconomyAPI aka. not registered
-									break;
+								break;
+							case "Rabbit":
+								if ($r = EconomyAPI::getInstance()->reduceMoney($sender, 1000)) {
+									# Cool, everything is fine.
+									$this->ownerplugin->changePet($sender, "RabbitPet");
+									$pettype = "Rabbit";
+									$sender->sendMessage(sprintf($this->ownerplugin->getConfig()->get("PetCreateMessage"), $pettype));
+									return true;
+								} else {
+									// $r is an error code
+									switch ($r) {
+										case EconomyAPI::RET_INVALID:
+											# Invalid $amount
+											break;
+										case EconomyAPI::RET_CANCELLED:
+											# Transaction was cancelled for some reason :/
+											break;
+										case EconomyAPI::RET_NO_ACCOUNT:
+											# Player wasn't recognised by EconomyAPI aka. not registered
+											break;
+									}
 								}
-							}
-						case "Cat":
-							if($r = EconomyAPI::getInstance()->reduceMoney($sender, 1500)){
-								# Cool, everything is fine.
-								$this->main->changePet($sender, "OcelotPet");
-								$pettype = "Cat";
-								$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
-								return true;
-							} else {
-								// $r is an error code
-								switch($r){
-									case EconomyAPI::RET_INVALID:
-									# Invalid $amount
-									break;
-									case EconomyAPI::RET_CANCELLED:
-									# Transaction was cancelled for some reason :/
-									break;
-									case EconomyAPI::RET_NO_ACCOUNT:
-									# Player wasn't recognised by EconomyAPI aka. not registered
-									break;
+								break;
+							case "Cat":
+								if ($r = EconomyAPI::getInstance()->reduceMoney($sender, 1500)) {
+									# Cool, everything is fine.
+									$this->ownerplugin->changePet($sender, "OcelotPet");
+									$pettype = "Cat";
+									$sender->sendMessage(sprintf($this->ownerplugin->getConfig()->get("PetCreateMessage"), $pettype));
+									return true;
+								} else {
+									// $r is an error code
+									switch ($r) {
+										case EconomyAPI::RET_INVALID:
+											# Invalid $amount
+											break;
+										case EconomyAPI::RET_CANCELLED:
+											# Transaction was cancelled for some reason :/
+											break;
+										case EconomyAPI::RET_NO_ACCOUNT:
+											# Player wasn't recognised by EconomyAPI aka. not registered
+											break;
+									}
 								}
-							}
-						break;
-						case "Chicken":
-							if($r = EconomyAPI::getInstance()->reduceMoney($sender, 750)){
-								# Cool, everything is fine.
-								$this->main->changePet($sender, "ChickenPet");
-								$pettype = "Chicken";
-								$sender->sendMessage($this->main->getConfig()->get("PetCreateMessage"));
-								return true;
-							} else {
-								// $r is an error code
-								switch($r){
-									case EconomyAPI::RET_INVALID:
-									# Invalid $amount
-									break;
-									case EconomyAPI::RET_CANCELLED:
-									# Transaction was cancelled for some reason :/
-									break;
-									case EconomyAPI::RET_NO_ACCOUNT:
-									# Player wasn't recognised by EconomyAPI aka. not registered
-									break;
+								break;
+							case "Chicken":
+								if ($r = EconomyAPI::getInstance()->reduceMoney($sender, 750)) {
+									# Cool, everything is fine.
+									$this->ownerplugin->changePet($sender, "ChickenPet");
+									$pettype = "Chicken";
+									$sender->sendMessage(sprintf($this->ownerplugin->getConfig()->get("PetCreateMessage"), $pettype));
+									return true;
+								} else {
+									// $r is an error code
+									switch ($r) {
+										case EconomyAPI::RET_INVALID:
+											# Invalid $amount
+											break;
+										case EconomyAPI::RET_CANCELLED:
+											# Transaction was cancelled for some reason :/
+											break;
+										case EconomyAPI::RET_NO_ACCOUNT:
+											# Player wasn't recognised by EconomyAPI aka. not registered
+											break;
+									}
 								}
-							}
-					default:
-						$sender->sendMessage("§b/pets spawn [type]");
-						$sender->sendMessage("§bEnabledTypes: Dog, Rabbit, Pig, Cat, Chicken");
-					break;	
-					return true;
+								break;
+							default:
+								$sender->sendMessage("§b/pets spawn [type]");
+								$sender->sendMessage("§bEnabledTypes: Dog, Rabbit, Pig, Cat, Chicken");
+								break;
+						}
 					}
+					break;
 				}
-			break;
+				return true;
 		}
-		return true;
-	}
+		return false;
 	}
 }
