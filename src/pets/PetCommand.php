@@ -9,7 +9,6 @@ use pocketmine\plugin\Plugin;
 use pocketmine\utils\Config;
 
 class PetCommand extends PluginCommand {
-	
 	/** @var main|Plugin */
 	private $ownerplugin;
 
