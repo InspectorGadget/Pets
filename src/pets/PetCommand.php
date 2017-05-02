@@ -140,7 +140,7 @@ class PetCommand extends PluginCommand {
 										case EconomyAPI::RET_NO_ACCOUNT:
 											# Player wasn't recognised by EconomyAPI aka. not registered
 											break;
-									}
+									}*/
 								}
 								break;
 							case "Cat":
