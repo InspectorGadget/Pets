@@ -47,7 +47,6 @@ abstract class Pet extends Creature {
 				$pk->x = $this->x;
 				$pk->y = $this->y;
 				$pk->z = $this->z;
-
 				$pk->speedX = 0;
 				$pk->speedY = 0;
 				$pk->speedZ = 0;
@@ -68,6 +67,7 @@ abstract class Pet extends Creature {
 			}
 		}
 	}
+
 	public function attack($damage, EntityDamageEvent $source) {
 
 	}
