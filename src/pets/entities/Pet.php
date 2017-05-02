@@ -73,20 +73,11 @@ abstract class Pet extends Creature {
 	}
 
 	public function onUpdate($currentTick) {
-		if(!($this->owner instanceof Player) || $this->owner->closed) {
-			$this->fastClose();
+		if ($this->closed) {
 			return false;
 		}
-
-		if($this->getHealth() == 0){
-			return false;
-		}
-		
-		if(!$this->isAlive()){
-			return false;
-		}
-		
-		if($this->closed){
+		if (!($this->owner instanceof Player) || $this->owner->closed) {
+			$this->close();
 			return false;
 		}
 		$tickDiff = $currentTick - $this->lastUpdate;
@@ -110,7 +101,7 @@ abstract class Pet extends Creature {
 	}
 
 	public function updateMove() {
-		if(is_null($this->closeTarget)) {
+		if (is_null($this->closeTarget) || is_null($this->owner)) {
 			$x = $this->owner->x - $this->x;
 			$z = $this->owner->z - $this->z;
 		} else {
@@ -121,7 +112,7 @@ abstract class Pet extends Creature {
 			$this->motionX = 0;
 			$this->motionZ = 0;
 			$this->motionY = 0;
-			if(!is_null($this->closeTarget)) {
+			if (!is_null($this->closeTarget)) {
 				$this->close();
 			}
 			return;
@@ -131,7 +122,7 @@ abstract class Pet extends Creature {
 			$this->motionZ = $this->getSpeed() * 0.15 * ($z / $diff);
 		}
 		$this->yaw = -atan2($this->motionX, $this->motionZ) * 180 / M_PI;
-		if(is_null($this->closeTarget)) {
+		if (is_null($this->closeTarget)) {
 			$y = $this->owner->y - $this->y;
 		} else {
 			$y = $this->closeTarget->y - $this->y;
@@ -142,25 +133,24 @@ abstract class Pet extends Creature {
 		$newX = Math::floorFloat($this->x + $dx);
 		$newZ = Math::floorFloat($this->z + $dz);
 		$block = $this->level->getBlock(new Vector3($newX, Math::floorFloat($this->y), $newZ));
-		if (!($block instanceof Air) && !($block instanceof Liquid)) {
+		if (!($block instanceof Air)) {
 			$block = $this->level->getBlock(new Vector3($newX, Math::floorFloat($this->y + 1), $newZ));
-			if (!($block instanceof Air) && !($block instanceof Liquid)) {
+			if (!($block instanceof Air && !($block instanceof Liquid))) {
 				$this->motionY = 0;
-				if(is_null($this->closeTarget)) {
+				if (is_null($this->closeTarget)) {
 					$this->returnToOwner();
 					return;
 				}
 			} else {
-				if (!$block->canBeFlowedInto) {
-					$this->motionY = 1.1;
-				} else {
-					$this->motionY = 0;
-				}
+				$deltaGround = 0;
+				if(!is_null($block->getBoundingBox())) $deltaGround = $block->getBoundingBox()->maxY;
+				if($block instanceof Liquid) $deltaGround = $block->getFluidHeightPercent();
+				$this->motionY = $deltaGround;
 			}
 		} else {
 			$block = $this->level->getBlock(new Vector3($newX, Math::floorFloat($this->y - 1), $newZ));
 			if (!($block instanceof Air) && !($block instanceof Liquid)) {
-				$blockY = Math::floorFloat($this->y);
+				$blockY = Math::floorFloat($block->y);
 				if ($this->y - $this->gravity * 4 > $blockY) {
 					$this->motionY = -$this->gravity * 4;
 				} else {
