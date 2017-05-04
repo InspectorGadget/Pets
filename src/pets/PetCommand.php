@@ -7,6 +7,7 @@ use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\utils\Config;
+use onebone\economyapi\EconomyAPI;
 
 class PetCommand extends PluginCommand {
 	
