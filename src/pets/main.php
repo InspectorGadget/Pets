@@ -77,7 +77,7 @@ class main extends PluginBase implements Listener {
 			$this->despawnFromAll();
 			$this->setHealth(0);
 		} else {
-			if (isset(main::$pet[$this->owner->getName()])) {
+			if (isset(self::$pet[$this->owner->getName()])) {
 				$this->close();
 				$this->despawnFromAll();
 				$this->setHealth(0);
