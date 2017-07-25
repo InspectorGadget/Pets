@@ -1,6 +1,11 @@
-name: Pets
-author: Driesboy
-description: Simple Pets Plugin By BalAnce + Driesboy + Lifeboat
-version: 2.0.0 
+name: SuperPets
+author: RTGTeam
+description: Regeneration for IG!
+version: 3.1.1
 main: pets\main
 api: [2.0.0]
+permissions:
+  superpets:
+    default: op
+  superload:
+    default: op

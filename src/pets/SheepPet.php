@@ -1,17 +1,19 @@
 <?php
 
-namespace pets\entities;
+namespace pets;
 
-class PigPet extends Pet {
+class SheepPet extends Pets {
 
-	const NETWORK_ID = 12;
+	const NETWORK_ID = 13;
+
+	const DATA_COLOR_INFO = 16;
 
     public $width = 1.45;
     public $height = 1.12;
 
 
 	public function getName() {
-		return "PigPet";
+		return "SheepPet";
 	}
 
 	public function getSpeed() {
