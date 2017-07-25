@@ -1,6 +1,6 @@
 name: SuperPets
-author: RTGTeam
-description: Regeneration for IG!
+author: RTGTeam && DriesBoy
+description: A fork of DriesBoy's Pets
 version: 3.1.1
 main: pets\main
 api: [2.0.0]
